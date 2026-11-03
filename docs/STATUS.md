@@ -313,3 +313,16 @@ their immediate model directory as a task hint, with either path separator. Name
 publisher prefixes and unrelated words are not classified by arbitrary ancestor directories.
 Regression tests cover mixed model lists and servers listing only specialised models through
 the local discovery API. Classification remains a name heuristic; it does not probe model capabilities.
+
+## CPIO checksum work during firmware scans
+
+CRC cpio member checksum fields require eight ASCII hexadecimal digits. Firmware scans share a
+checksum byte allowance equal to the input length across all candidates, including overlapping
+archives. Sums poll cancellation every 64 KiB; cancelling a sum stops the scan without publishing
+that unfinished archive probe. The standalone cpio parser still checks complete member data.
+
+When the allowance runs out, the scan reports skipped checksum verification separately from a
+checksum mismatch. Region details retain the structural trailer flag, disclose visited checksum
+bytes and skipped verification, and use medium confidence for skipped CRC checks. Empty members
+need no byte allowance; newc and odc behavior is unchanged. Synthetic regressions cover these
+boundaries and cancellation; no real firmware corpus or throughput benchmark was used.
